@@ -41,7 +41,7 @@
     .hero h1 { margin: 0 0 6px; font-size: clamp(26px, 3vw, 38px); }
     .hero p { margin: 0; opacity: .92; max-width: 900px; }
     .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
-    button {
+    button, .btn-link {
       border: 1px solid transparent;
       border-radius: 10px;
       padding: 10px 14px;
@@ -50,7 +50,8 @@
       transition: .15s ease;
       font: inherit;
     }
-    button:hover { transform: translateY(-1px); }
+    .btn-link { display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+    button:hover, .btn-link:hover { transform: translateY(-1px); }
     .btn-light { background: white; color: #0b63ce; }
     .btn-ghost { background: rgba(255,255,255,.14); color: white; border-color: rgba(255,255,255,.35); }
     .btn-primary { background: var(--primary); color: white; }
@@ -166,6 +167,7 @@
       <button class="btn-ghost" id="resetBtn">Zurücksetzen</button>
       <button class="btn-ghost" id="copyBtn">Ergebnis kopieren</button>
       <button class="btn-ghost" onclick="window.print()">Drucken / PDF</button>
+      <a class="btn-link btn-ghost" href="ai-assistant.html">AI-Assistant</a>
     </div>
   </header>
 
@@ -272,21 +274,25 @@
         <h3>AI Assistant – Digital</h3>
         <div class="fields">
           <div class="field">
-            <label for="assistantDigitalSessionsInput">Digital Sessions gesamt / Monat</label>
-            <input id="assistantDigitalSessionsInput" type="number" min="0" step="1" placeholder="0">
-            <span class="hint">Hier die tatsächlich relevanten Digital Sessions eingeben.</span>
+            <label for="assistantDigitalConversations">Digital Conversations gesamt / Monat</label>
+            <input id="assistantDigitalConversations" type="number" min="0" step="1" placeholder="0">
           </div>
           <div class="field">
             <label for="assistantDigitalShare">Davon mit AI Assistant (%)</label>
             <input id="assistantDigitalShare" type="number" min="0" max="100" step="0.1" placeholder="z. B. 85">
           </div>
+          <div class="field full">
+            <label for="assistantInboundMessages">Ø Inbound Messages je Client / Session-Fenster</label>
+            <input id="assistantInboundMessages" type="number" min="0" step="0.1" placeholder="z. B. 8">
+            <span class="hint">Gemäß bereitgestellter AI-Assistant-Bundle-Folie: 10 Inbound Messages = 1 Digital Session.</span>
+          </div>
         </div>
-        <div class="notice">AI Agent Digital und AI Assistant Digital werden bewusst getrennt berechnet. Die 10-Outbound-Messages-/24h-Regel stammt aus der bereitgestellten AI-Agent-Bundle-Folie. Für AI Assistant wird daher die Anzahl der Digital Sessions direkt eingegeben.</div>
+        <div class="notice">Digital-Metering: AI Agent = 10 Outbound Messages pro Client je 24 h = 1 Session. AI Assistant = 10 Inbound Messages = 1 Session. Die jeweiligen Session-Verbräuche werden getrennt berechnet.</div>
       </div>
 
       <div class="card" style="margin-top:18px">
         <h2>Dimensionierung & Preise</h2>
-        <p class="sub">Der Puffer wird auf den gemeinsamen Unit-Verbrauch angewandt. Die bereitgestellten Bundle-Folien nennen $100 für AI Agent und $30 für AI Assistant; die Felder bleiben editierbar für CCW-/Partnerpreise.</p>
+        <p class="sub">Der Puffer wird auf den gemeinsamen Unit-Verbrauch angewandt. Die bereitgestellten Bundle-Folien nennen $30 committed bzw. $34.50 uncommitted für AI Assistant. Der AI-Agent-Preis bleibt editierbar für den aktuellen CCW-/Partnerpreis.</p>
         <div class="fields">
           <div class="field">
             <label for="bufferPct">Sizing-Puffer (%)</label>
@@ -301,7 +307,7 @@
             <input id="aiAgentPrice" type="number" min="0" step="0.01" value="100" placeholder="CCW-Preis">
           </div>
           <div class="field">
-            <label for="assistantPrice">AI Assistant Preis / Unit / Monat <span class="hint">optional</span></label>
+            <label for="assistantPrice">AI Assistant Preis / Unit / Monat <span class="hint">$30 committed / $34.50 uncommitted</span></label>
             <input id="assistantPrice" type="number" min="0" step="0.01" value="30" placeholder="CCW-Preis">
           </div>
         </div>
@@ -314,9 +320,10 @@
             <div class="field"><label for="capAutoVoice">Autonomous Voice Min./Unit</label><input id="capAutoVoice" type="number" min="1" value="250"></div>
             <div class="field"><label for="capScriptedDigital">Scripted Digital Sessions/Unit</label><input id="capScriptedDigital" type="number" min="1" value="4800"></div>
             <div class="field"><label for="capAutoDigital">Autonomous Digital Sessions/Unit</label><input id="capAutoDigital" type="number" min="1" value="200"></div>
-            <div class="field"><label for="capAssistantVoice">AI Assistant Voice Min./Unit</label><input id="capAssistantVoice" type="number" min="1" value="2000"></div>
-            <div class="field"><label for="capAssistantDigital">AI Assistant Digital Sessions/Unit</label><input id="capAssistantDigital" type="number" min="1" value="12000"></div>
+            <div class="field"><label for="capAssistantVoice">AI Assistant Voice Min./Unit</label><input id="capAssistantVoice" type="number" min="1" value="1500"></div>
+            <div class="field"><label for="capAssistantDigital">AI Assistant Digital Sessions/Unit</label><input id="capAssistantDigital" type="number" min="1" value="1000"></div>
             <div class="field"><label for="messagesPerSession">AI Agent Outbound Messages pro Session</label><input id="messagesPerSession" type="number" min="1" value="10"></div>
+            <div class="field"><label for="assistantMessagesPerSession">AI Assistant Inbound Messages pro Session</label><input id="assistantMessagesPerSession" type="number" min="1" value="10"></div>
           </div>
         </details>
       </div>
@@ -336,8 +343,8 @@
             <div class="row"><span>AI Agent Autonomous Voice</span><strong>250 Min. / Unit</strong></div>
             <div class="row"><span>AI Agent Scripted Digital</span><strong>4.800 Sessions / Unit</strong></div>
             <div class="row"><span>AI Agent Autonomous Digital</span><strong>200 Sessions / Unit</strong></div>
-            <div class="row"><span>AI Assistant Voice</span><strong>2.000 Min. / Unit</strong></div>
-            <div class="row"><span>AI Assistant Digital</span><strong>12.000 Sessions / Unit</strong></div>
+            <div class="row"><span>AI Assistant Voice</span><strong>1.500 Min. / Unit</strong></div>
+            <div class="row"><span>AI Assistant Digital</span><strong>1.000 Sessions / Unit</strong></div>
           </div>
         </div>
 
@@ -405,7 +412,7 @@
 
         <h3>Berechnungslogik</h3>
         <div class="formula">AI Agent Units = ScriptedVoiceMin/1600 + AutonomousVoiceMin/250 + ScriptedDigitalSessions/4800 + AutonomousDigitalSessions/200</div>
-        <div class="formula" style="margin-top:8px">AI Assistant Units = AssistantVoiceMin/2000 + AssistantDigitalSessions/12000</div>
+        <div class="formula" style="margin-top:8px">AI Assistant Units = AssistantVoiceMin/1500 + AssistantDigitalSessions/1000</div>
         <div class="privacy">Keine Datenübertragung: Die Seite enthält kein Backend und sendet keine Eingaben an einen Server.</div>
       </div>
     </aside>
@@ -427,9 +434,9 @@
     'voiceCalls','aiVoiceShare','scriptedVoiceShare','autonomousVoiceShare','scriptedVoiceDuration','autoVoiceDuration',
     'humanVoiceCalls','humanTalkSeconds','assistantVoiceShare',
     'digitalConversations','aiDigitalShare','scriptedDigitalShare','autonomousDigitalShare','scriptedMessages','autoMessages',
-    'assistantDigitalSessionsInput','assistantDigitalShare',
+    'assistantDigitalConversations','assistantDigitalShare','assistantInboundMessages',
     'bufferPct','currency','aiAgentPrice','assistantPrice',
-    'capScriptedVoice','capAutoVoice','capScriptedDigital','capAutoDigital','capAssistantVoice','capAssistantDigital','messagesPerSession'
+    'capScriptedVoice','capAutoVoice','capScriptedDigital','capAutoDigital','capAssistantVoice','capAssistantDigital','messagesPerSession','assistantMessagesPerSession'
   ];
   const $ = id => document.getElementById(id);
   const n = id => Number($(id).value || 0);
@@ -451,7 +458,7 @@
     ['aiVoiceShare','scriptedVoiceShare','assistantVoiceShare','aiDigitalShare','scriptedDigitalShare','assistantDigitalShare','bufferPct'].forEach(id => {
       if (n(id) < 0 || n(id) > 100) errors.push(`${$(''+id).previousElementSibling?.innerText || id}: Wert muss zwischen 0 und 100 liegen.`);
     });
-    const caps = ['capScriptedVoice','capAutoVoice','capScriptedDigital','capAutoDigital','capAssistantVoice','capAssistantDigital','messagesPerSession'];
+    const caps = ['capScriptedVoice','capAutoVoice','capScriptedDigital','capAutoDigital','capAssistantVoice','capAssistantDigital','messagesPerSession','assistantMessagesPerSession'];
     caps.forEach(id => { if (n(id) <= 0) errors.push(`${id}: Kapazität muss größer als 0 sein.`); });
     $('validation').style.display = errors.length ? 'block' : 'none';
     $('validation').textContent = errors.join(' ');
@@ -483,7 +490,10 @@
     const assistantVoiceMin = n('humanVoiceCalls') * pct('assistantVoiceShare') * n('humanTalkSeconds') / 60;
     const assistantVoiceEq = assistantVoiceMin / Math.max(1, n('capAssistantVoice'));
 
-    const assistantDigitalSessions = n('assistantDigitalSessionsInput') * pct('assistantDigitalShare');
+    const assistantDigitalContacts = n('assistantDigitalConversations') * pct('assistantDigitalShare');
+    const assistantMsgBucket = Math.max(1, n('assistantMessagesPerSession'));
+    const assistantSessionsPerConv = n('assistantInboundMessages') > 0 ? Math.ceil(n('assistantInboundMessages') / assistantMsgBucket) : 0;
+    const assistantDigitalSessions = assistantDigitalContacts * assistantSessionsPerConv;
     const assistantDigitalEq = assistantDigitalSessions / Math.max(1, n('capAssistantDigital'));
 
     const assistantRaw = assistantVoiceEq + assistantDigitalEq;
@@ -541,7 +551,7 @@
       voiceCalls:3112, aiVoiceShare:30, scriptedVoiceShare:0, scriptedVoiceDuration:120, autoVoiceDuration:180,
       humanVoiceCalls:3112, humanTalkSeconds:200, assistantVoiceShare:100,
       digitalConversations:0, aiDigitalShare:0, scriptedDigitalShare:0, scriptedMessages:0, autoMessages:0,
-      assistantDigitalSessionsInput:0, assistantDigitalShare:85,
+      assistantDigitalConversations:0, assistantDigitalShare:85, assistantInboundMessages:0,
       bufferPct:0
     };
     Object.entries(values).forEach(([id,val]) => $(id).value = val);
@@ -550,7 +560,7 @@
 
   $('resetBtn').addEventListener('click', () => {
     ids.forEach(id => {
-      if (['capScriptedVoice','capAutoVoice','capScriptedDigital','capAutoDigital','capAssistantVoice','capAssistantDigital','messagesPerSession','bufferPct','currency','scriptedVoiceShare','scriptedDigitalShare'].includes(id)) return;
+      if (['capScriptedVoice','capAutoVoice','capScriptedDigital','capAutoDigital','capAssistantVoice','capAssistantDigital','messagesPerSession','assistantMessagesPerSession','bufferPct','currency','scriptedVoiceShare','scriptedDigitalShare'].includes(id)) return;
       if (!$(id).readOnly) $(id).value = '';
     });
     $('scriptedVoiceShare').value = 0;
@@ -561,9 +571,10 @@
     $('capAutoVoice').value = 250;
     $('capScriptedDigital').value = 4800;
     $('capAutoDigital').value = 200;
-    $('capAssistantVoice').value = 2000;
-    $('capAssistantDigital').value = 12000;
+    $('capAssistantVoice').value = 1500;
+    $('capAssistantDigital').value = 1000;
     $('messagesPerSession').value = 10;
+    $('assistantMessagesPerSession').value = 10;
     $('aiAgentPrice').value = 100;
     $('assistantPrice').value = 30;
     calc();
