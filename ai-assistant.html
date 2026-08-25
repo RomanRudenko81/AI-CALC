@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Cisco Webex Contact Center AI Assistant Features und Einfluss auf das Unit Sizing" />
+  <title>Webex CC AI Assistant – Features & Unit Sizing</title>
+  <style>
+    :root {
+      --bg:#f5f7fb; --card:#fff; --text:#182230; --muted:#637083; --line:#dfe5ec;
+      --primary:#0b63ce; --primary2:#1b84e7; --soft:#eaf3ff; --good:#0f7b52;
+      --warn:#9a6500; --warnbg:#fff8e7; --info:#155eef; --shadow:0 12px 32px rgba(16,24,40,.08);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+    .wrap{max-width:1240px;margin:0 auto;padding:28px 18px 56px}
+    .hero{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:26px 28px;border-radius:22px;box-shadow:var(--shadow);margin-bottom:22px}
+    .hero h1{margin:0 0 6px;font-size:clamp(26px,3vw,38px)}
+    .hero p{margin:0;opacity:.93;max-width:980px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:10px 14px;font-weight:700;text-decoration:none;transition:.15s ease}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-light{background:#fff;color:var(--primary)}
+    .btn-ghost{background:rgba(255,255,255,.14);color:#fff}
+    .summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .metric,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .metric{padding:18px}.metric .value{font-size:28px;font-weight:850;color:var(--primary);letter-spacing:-.5px}.metric .label{font-size:13px;color:var(--muted);margin-top:3px}
+    .card{padding:20px;margin-top:18px}.card h2{margin:0 0 7px;font-size:22px}.card h3{margin:0 0 7px;font-size:18px}.sub{color:var(--muted);font-size:14px;margin:0}
+    .rule{background:#eef6ff;border:1px solid #b9d6fb;border-left:5px solid var(--primary);border-radius:14px;padding:16px 17px;margin:18px 0}
+    .rule strong{color:#074b9f}
+    .formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f2f4f7;border:1px solid #e4e7ec;border-radius:9px;padding:10px;margin-top:10px;font-size:13px;overflow-x:auto}
+    .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    .feature{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+    .feature-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}.feature h3{margin:0;font-size:18px}
+    .badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.badge{font-size:11px;font-weight:800;border-radius:999px;padding:4px 8px;white-space:nowrap}.voice{background:#eaf3ff;color:#0b63ce}.digital{background:#ebf9f1;color:#087443}.hundred{background:#fff1f0;color:#b42318}.depends{background:#fff8e7;color:#8a5a00}.confirmed{background:#ecfdf3;color:#027a48}
+    .feature p{font-size:14px;margin:8px 0}.feature ul{margin:8px 0 0;padding-left:20px;font-size:14px}.feature li{margin:5px 0}
+    .impact{margin-top:12px;padding:12px 13px;background:#f8fafc;border:1px solid #e3e8ef;border-radius:11px;font-size:13px}.impact strong{color:#344054}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:11px 10px}th{background:#f8fafc;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:#475467}tr:last-child td{border-bottom:0}
+    .notice{margin-top:18px;padding:14px 15px;border-radius:12px;background:var(--warnbg);border:1px solid #f0d58a;color:#644b00;font-size:13px}
+    .good-note{margin-top:18px;padding:14px 15px;border-radius:12px;background:#edfdf5;border:1px solid #a6f4c5;color:#05603a;font-size:13px}
+    .sources{font-size:13px;color:var(--muted)}.sources a{color:var(--primary);word-break:break-word}.footer{margin-top:24px;font-size:12px;color:var(--muted)}
+    code{background:#f2f4f7;padding:2px 5px;border-radius:5px}
+    @media(max-width:900px){.summary-grid{grid-template-columns:1fr}.feature-grid{grid-template-columns:1fr}}
+    @media(max-width:650px){.hero{padding:21px 19px}.card{padding:16px}.feature{padding:16px}table{font-size:12px}th,td{padding:9px 6px}}
+    @media print{body{background:#fff}.toolbar{display:none}.wrap{max-width:none;padding:0}.hero,.card,.feature,.metric{box-shadow:none}.hero{border-radius:0}.feature{break-inside:avoid}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>Webex CC AI Assistant</h1>
+    <p>Feature-Übersicht und Presales-Sizing: Welche AI-Assistant-Funktion verarbeitet welche Interaktionen – und wann muss deshalb 100&nbsp;% der Agent↔Kunde-Gesprächszeit eingeplant werden?</p>
+    <div class="toolbar">
+      <a class="btn btn-light" href="index.html">← Zum Unit Calculator</a>
+      <a class="btn btn-ghost" href="#features">Features</a>
+      <a class="btn btn-ghost" href="#sizing">Sizing-Logik</a>
+      <a class="btn btn-ghost" href="#sources">Cisco Quellen</a>
+    </div>
+  </header>
+
+  <section class="summary-grid">
+    <div class="metric"><div class="value">1.500 Min.</div><div class="label">Voice-Kapazität je AI Assistant Unit / Billing Cycle</div></div>
+    <div class="metric"><div class="value">1.000</div><div class="label">Digital Sessions je Unit; max. 10 Nachrichten pro Session</div></div>
+    <div class="metric"><div class="value">1×</div><div class="label">Mehrere AI-Features im selben Kontakt multiplizieren den Verbrauch nicht</div></div>
+  </section>
+
+  <section class="card" id="sizing">
+    <h2>Die wichtigste Regel für die Unit-Berechnung</h2>
+    <p class="sub">AI Assistant wird nicht pro Feature lizenziert, sondern anhand der Interaktionen, in denen AI-Assistant-Funktionen genutzt werden.</p>
+    <div class="rule">
+      <strong>Bestätigt:</strong> Bei Voice wird die tatsächliche Agent↔Kunde-Interaktionszeit sekundengenau gemessen. IVR-, Queue- und Wrap-up-Zeit zählen nicht. Werden in derselben Interaktion mehrere AI-Assistant-Funktionen genutzt, wird die Gesprächszeit trotzdem nur einmal gezählt.
+    </div>
+    <div class="formula">AI Assistant Voice Units = (Summe der Agent↔Kunde-Minuten aller Kontakte mit mindestens einem AI-Assistant-Feature) / 1.500</div>
+    <p><strong>Konsequenz:</strong> Für den Calculator ist nicht die Summe der Feature-Prozentsätze entscheidend, sondern die <strong>Vereinigung aller betroffenen Interaktionen</strong>.</p>
+    <p>Beispiel: Real-Time Transcription = 100 %, Post-Call Summary = 100 % und Auto CSAT = 100 % ergibt <strong>nicht 300 %</strong>, sondern weiterhin <strong>100 % AI-Assistant-Abdeckung</strong>.</p>
+  </section>
+
+  <section class="card" id="features">
+    <h2>Aktuelle AI-Assistant-Funktionen</h2>
+    <p class="sub">Stand August 2026. Cisco führt aktuell die folgenden Funktionen für Webex Contact Center AI Assistant auf.</p>
+
+    <div class="feature-grid">
+      <article class="feature">
+        <div class="feature-head"><h3>Real-Time Transcription</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge hundred">typisch 100 %</span></div></div>
+        <p>Erstellt während des laufenden Agentengesprächs ein Live-Transkript im Agent Desktop. Die Audiodaten werden ab <code>AgentAnswered</code> über Media Streaming zur Transkriptionsverarbeitung gespiegelt.</p>
+        <ul><li>Aktivierung ist queue-/flow-bezogen möglich.</li><li>Bei Aktivierung für alle relevanten Queues wird jeder Agentenkontakt transkribiert.</li><li>Sentiment Analysis und Voice Real-Time Assist bauen auf Transkriptionsdaten auf.</li></ul>
+        <div class="impact"><strong>Auswirkung auf Units:</strong> Wenn auf allen Voice-Calls aktiviert → <strong>100 % der Agent↔Kunde-Minuten</strong>. Nur ausgewählte Queues → deren tatsächlicher Anteil an den Voice-Minuten. Weitere Features im selben Call erzeugen keinen zweiten Minutenverbrauch.</div>
+      </article>
+
+      <article class="feature">
+        <div class="feature-head"><h3>Real-Time Assist</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge digital">Digital</span><span class="badge hundred">Live Feature</span></div></div>
+        <p>Analysiert den Gesprächskontext kontinuierlich, erkennt Intentionen und liefert dem Agenten kontextbezogene Informationen, Next-Best-Actions und automatisierbare Aktionen aus Knowledge- und Business-Systemen.</p>
+        <ul><li>Nachfolger der früheren „Suggested Responses“.</li><li>Für Voice ist die Live-Transkription die Grundlage für die laufende Konversationsanalyse.</li><li>Kann gezielt für bestimmte Skills/Use Cases ausgerollt werden.</li></ul>
+        <div class="impact"><strong>Auswirkung auf Units:</strong> Läuft Real-Time Assist auf jedem Voice-Call, sind <strong>100 % der Minuten</strong> zu dimensionieren. Wird es nur in ausgewählten Queues/Use Cases verwendet, zählt nur dieser Interaktionsanteil. Wenn gleichzeitig Real-Time Transcription läuft: <strong>keine Verdopplung</strong>.</div>
+      </article>
+
+      <article class="feature">
+        <div class="feature-head"><h3>AI-Generated Summaries</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge depends">abhängig vom Summary-Typ</span></div></div>
+        <p>Erzeugt automatisch strukturierte Zusammenfassungen, damit Agents nach Drops, Handoffs, Transfers oder beim Wrap-up nicht manuell den gesamten Gesprächskontext rekonstruieren müssen.</p>
+        <ul>
+          <li><strong>Dropped Call Summary:</strong> für qualifizierende abgebrochene Calls.</li>
+          <li><strong>Virtual Agent Transfer Summary:</strong> beim Handoff vom AI Agent zum Human Agent.</li>
+          <li><strong>Mid-Call Consult/Transfer Summary:</strong> beim Consult oder Transfer.</li>
+          <li><strong>Post-Call Summary:</strong> nach Gesprächsende für Wrap-up/Notizen.</li>
+          <li><strong>AI-Generated Wrap-up Reason:</strong> schlägt einen passenden Wrap-up-Code vor.</li>
+        </ul>
+        <div class="impact"><strong>Auswirkung auf Units:</strong> Entscheidend ist, für welche Calls tatsächlich eine AI-Zusammenfassung erzeugt wird. Cisco bestätigt, dass die Abrechnung bei der <strong>Generierung</strong> erfolgt – auch wenn der Agent die Summary nicht öffnet. Post-Call Summary für alle Calls → <strong>100 %</strong>. Nur Dropped-Call-Summaries → nur der Anteil der qualifizierenden Dropped Calls.</div>
+      </article>
+
+      <article class="feature">
+        <div class="feature-head"><h3>Auto CSAT</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge hundred">100 % im Scope</span></div></div>
+        <p>Prognostiziert nach der Interaktion einen Customer-Satisfaction-Score auf Basis von Betriebsdaten, Gesprächstranskripten und Survey-Daten. Die Ergebnisse stehen Supervisoren und Analysten zur Verfügung.</p>
+        <ul><li>Call Recording ist Voraussetzung für das Post-Call Processing.</li><li>Cisco beschreibt Auto CSAT als Bewertung von 100 % der Voice-Interaktionen im aktivierten Scope.</li><li>Kann für alle oder ausgewählte Queues aktiviert werden.</li></ul>
+        <div class="impact"><strong>Auswirkung auf Units:</strong> Auto CSAT auf allen Voice-Queues → <strong>100 % der Agent↔Kunde-Minuten</strong>. Bei selektiven Queues → deren Minutenanteil. Bereits durch Transcription/RTA abgedeckte Calls werden nicht nochmals gezählt.</div>
+      </article>
+
+      <article class="feature">
+        <div class="feature-head"><h3>Sentiment Analysis</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge depends">Queue Scope</span></div></div>
+        <p>Analysiert abgeschlossene Interaktionen und klassifiziert den Kundensentiment als positiv, neutral oder negativ. Damit können Supervisoren kritische Interaktionen schneller identifizieren und Trends verfolgen.</p>
+        <ul><li>Sentiment Analysis ist sowohl in AI Assistant als auch AI Quality Management enthalten.</li><li>Real-Time Transcription muss für die betreffenden Queues aktiviert sein.</li></ul>
+        <div class="impact"><strong>Auswirkung auf Units:</strong> Weil Sentiment Analysis in Voice die Real-Time Transcription voraussetzt, sind die betroffenen Calls bereits AI-Assistant-Interaktionen. Alle Queues → <strong>100 %</strong>; ausgewählte Queues → deren Minutenanteil. <strong>Kein zusätzlicher Verbrauch</strong> oberhalb der bereits gezählten Transkriptionsminuten.</div>
+      </article>
+
+      <article class="feature">
+        <div class="feature-head"><h3>Agent Wellbeing / Wellness Breaks</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge depends">Agent Scope</span></div></div>
+        <p>Das Burnout-Detection-Modell analysiert Call-Metriken und Transkripte, erstellt Stress-/Burnout-Prognosen und kann bei Bedarf kurze Wellbeing Breaks zwischen Kontakten anbieten.</p>
+        <ul><li>Aktivierbar für alle oder einzelne Agents.</li><li>Call Recording ist erforderlich.</li><li>Nach dem Modelltraining wird die Burnout-Prognose nach jeder folgenden Voice-Interaktion des aktivierten Agents erstellt.</li></ul>
+        <div class="impact"><strong>Sizing-Empfehlung:</strong> Für aktivierte Agents konservativ <strong>100 % ihrer Voice-Interaktionsminuten</strong> ansetzen. Bei Aktivierung für alle Agents entspricht das praktisch 100 % des Voice-Volumens. Cisco veröffentlicht hierfür keine separate günstigere Feature-Metering-Rate.</div>
+      </article>
+
+      <article class="feature">
+        <div class="feature-head"><h3>Topic Analytics</h3><div class="badges"><span class="badge voice">Voice</span><span class="badge depends">Queue Scope</span></div></div>
+        <p>Identifiziert automatisch Contact Driver und Themen aus Interaktionen und stellt Trends im Supervisor Desktop bzw. Analyzer bereit. Damit lassen sich Ursachen für Kontaktvolumen, Trainingsbedarf und Automatisierungspotenziale erkennen.</p>
+        <ul><li>Im AI Assistant Add-on enthalten.</li><li>Kann alle oder ausgewählte Queues analysieren.</li><li>Call Recording ist erforderlich; Cisco dokumentiert aktuell Voice-Transkripte als Basis.</li></ul>
+        <div class="impact"><strong>Sizing-Empfehlung:</strong> Die analysierten Interaktionen in die AI-Assistant-Abdeckung einrechnen. Topic Analytics für alle Voice-Queues → konservativ <strong>100 %</strong>. <strong>Glaube ich:</strong> Cisco veröffentlicht in der allgemeinen Metering-Dokumentation keine separate Feature-spezifische Ausnahme für Topic Analytics; vor einem verbindlichen Angebot bitte in CCW/Cisco-Dokumentation verifizieren.</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Welche Funktion zwingt typischerweise auf 100 %?</h2>
+    <table>
+      <thead><tr><th>Feature</th><th>Wenn global aktiviert</th><th>Empfohlener Wert im Calculator</th><th>Kommentar</th></tr></thead>
+      <tbody>
+        <tr><td>Real-Time Transcription</td><td><strong>100 %</strong></td><td>100 %</td><td>Jeder Voice-Call im Scope wird live transkribiert.</td></tr>
+        <tr><td>Real-Time Assist</td><td><strong>100 %</strong></td><td>100 %</td><td>Kontinuierliche Live-Analyse; kein Zusatzverbrauch zur Transkription desselben Calls.</td></tr>
+        <tr><td>Post-Call Summary</td><td><strong>100 %</strong></td><td>100 %</td><td>Wenn für jeden Call eine Summary generiert wird.</td></tr>
+        <tr><td>Auto CSAT</td><td><strong>100 %</strong></td><td>100 %</td><td>Cisco beschreibt Scoring von 100 % der Voice-Interaktionen im aktivierten Scope.</td></tr>
+        <tr><td>Sentiment Analysis</td><td><strong>100 %</strong></td><td>100 %</td><td>Benötigt Real-Time Transcription im selben Queue-Scope.</td></tr>
+        <tr><td>Agent Wellbeing</td><td><strong>100 % der Calls der aktivierten Agents</strong></td><td>gewichtet nach Agent-Anteil</td><td>Burnout-Prognose nach jeder Voice-Interaktion der aktivierten Agents.</td></tr>
+        <tr><td>Dropped / Transfer / Mid-Call Summary</td><td>Nein</td><td>tatsächlicher Ereignisanteil</td><td>Nur Kontakte, bei denen die jeweilige Summary erzeugt wird.</td></tr>
+        <tr><td>Topic Analytics</td><td>konservativ 100 %</td><td>Queue-Anteil</td><td>Bei Analyse aller Queues konservativ alle analysierten Voice-Interaktionen einplanen.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Beispiele für die korrekte Abdeckung</h2>
+    <div class="good-note"><strong>Beispiel A – Alles auf allen Calls:</strong> Real-Time Transcription 100 % + Auto CSAT 100 % + Post-Call Summary 100 % = <strong>100 % AI Assistant Nutzung</strong>, nicht 300 %.</div>
+    <div class="good-note"><strong>Beispiel B – Nur Summaries:</strong> Post-Call Summary wird nur auf zwei Queues genutzt, die zusammen 40 % der monatlichen Agent↔Kunde-Minuten ausmachen → <strong>40 %</strong> im Calculator.</div>
+    <div class="good-note"><strong>Beispiel C – Unterschiedliche Teilmengen:</strong> Summary auf 60 % der Minuten, Real-Time Assist auf weiteren 20 % ohne Überschneidung → <strong>80 %</strong>. Liegen die 20 % vollständig innerhalb der 60 %, bleibt es bei <strong>60 %</strong>.</div>
+  </section>
+
+  <section class="card">
+    <h2>Digital</h2>
+    <p>Bestätigt: Für AI Assistant Digital stehen <strong>1.000 Sessions pro Unit</strong> zur Verfügung. Eine Session umfasst maximal <strong>10 Nachrichten</strong>. Real-Time Assist unterstützt Voice und Digital. Auch hier gilt: Mehrere AI-Assistant-Funktionen innerhalb derselben digitalen Interaktion multiplizieren den Verbrauch nicht.</p>
+    <div class="formula">AI Assistant Digital Units = AI-Assistant-Digital-Sessions / 1.000</div>
+  </section>
+
+  <section class="card sources" id="sources">
+    <h2>Cisco Quellenbasis</h2>
+    <p>Die Seite wurde gegen aktuelle Cisco-Webex-Dokumentation geprüft. Kann Richtigkeit nicht garantieren – bitte vor einem verbindlichen Angebot die aktuelle Cisco-Dokumentation und CCW verifizieren.</p>
+    <ul>
+      <li><a href="https://help.webex.com/article/nqi1zrg/Cisco-Webex-Contact-Center-license-consumption-and-reporting" target="_blank" rel="noopener">Cisco Webex Contact Center license consumption and reporting</a></li>
+      <li><a href="https://help.webex.com/article/nvvv1zb/Cisco-AI-Assistant-/-Webex-Contact-Center" target="_blank" rel="noopener">Cisco AI Assistant for Webex Contact Center</a></li>
+      <li><a href="https://help.webex.com/article/ndt475w" target="_blank" rel="noopener">Enhance your efficiency using AI-generated summaries</a></li>
+      <li><a href="https://help.webex.com/article/6m6r3fb" target="_blank" rel="noopener">Enable AI Quality Management Features in Control Hub for Webex Contact Center</a></li>
+      <li><a href="https://help.webex.com/article/l5eu0c" target="_blank" rel="noopener">Improve agent wellbeing and performance with burnout detection and wellness breaks</a></li>
+      <li><a href="https://help.webex.com/article/v72wjab" target="_blank" rel="noopener">Get started with Topic Analytics</a></li>
+    </ul>
+  </section>
+
+  <div class="notice"><strong>Presales-Hinweis:</strong> Der Calculator sollte als „AI Assistant Nutzung (%)“ den Anteil der gesamten Agent↔Kunde-Interaktionszeit abbilden, auf dem <em>mindestens eine</em> AI-Assistant-Funktion aktiv ist. Bei Real-Time Transcription auf allen Voice-Calls ist dieser Wert automatisch 100 %.</div>
+  <footer class="footer">Webex CC AI Assistant Feature & Sizing Guide · Stand August 2026</footer>
+</div>
+</body>
+</html>
